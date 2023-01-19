@@ -1,0 +1,82 @@
+Erro principal:
+O erro principal aqui do porque não estar funcionando seriam as instancias da classe produto, no caso vc fez 3 instâncias:
+	Produto produto
+	Produto parmegiana1
+	Produto guarana
+mas na hora de adicionar vc fez: produto.add(parmegiana1) e produto.add1(guarana), nesse caso vc estaria dizendo: "classe do tipo Produto de nome produto, adiciona um objeto do tipo Produto de nome parmegiana1 dentro de produto
+ficou confuso né ? pra resumir foi a inserção de um objeto do tipo produto em outro, e vc fez isso duas vezes, então mesmo que estivesse funcionando como vc gostaria, acabou uma ação sobrescrevendo a outra.
+assim :
+	
+	tipo Produto de nome produto = é um produto em branco
+	
+	Ai vc pediu pra adicionar a parmegiana1 e ficou assim
+	tipo Produto de nome produto = parmegiana1
+	
+	E depois pediu pra adicionar o guarana dentro de produto
+	tipo Produto de nome produto = guarana
+
+acho que deu pra entender melhor, o certo seria a Produto produto nem existir pro que vc quer fazer
+ficaria assim pra dar certo no seu código sem minhas alterações, parmegiana1.add(parmegiana1) e guarana.add1(guarana), acho que não fez muito sentido, mas isso provavelmente funcionaria
+na realidade o ideal é vc na hora de instanciar criar já com as propriedades cruciais, eu expliquei melhor na parte de Produto, mas pra resumir
+quando vc instancia um objeto do tipo Produto, vc já ta criando ele, no caso vc criou ele vazio usando o construtor public produto(){ } da classe Produto, então quando vc fez no começo do App.java "Produto parmegiana1 = new Produto", vc já adicionou esse produto no sistema
+
+
+
+Classe Produto:
+No construtor de produto(nome, preco) tem atribuição de id e descrição, mas não tem os valores sendo recebidos nos paranteses
+A classe produto estava herdando (extends) de cliente, acho que não faz sentido nesse caso, já que o nome do cliente é diferente do nome do produto
+Mudei o nome dos atributos na classe, pra maiusculos, assim fica mais facil de entender quando estamos falando do atributo na classe ou no app.java
+Retirei a função de atribuir Id e coloquei a atribuição com o construtor, acredito que não tenha sentido em criar um produto sem Id nesse caso
+Mudei a função de adicionar produto (add) para ser mais genérica, assim vc pode determinar quais produtos vão ser adicionados pelo App.java e com uma única função, assim não se cria várias funções pra cada produto que for inserido no cardápio
+removi a linha de setPreco e setId de add, já que temos uma função só pra adicionar preco pública, não faz sentido chamar ela dentro da classe Produto, e sim no App.java
+Acho que seria interessante manter a função de setPreco pra caso necessário atualizar o preço, ao mesmo tempo que é bom colocar no construtor já sendo obrigatório informar o preço (nem que seja 00.00)
+Removi todos os System.out da função add, é legal deixar cada função com uma responsabilidade única, assim se tiver que mudar alguma coisa é só alterar a função que tem a responsabilidade que precise
+Como removi os System.out da função add, criei uma função nova só pra exibir as informações que vc quer
+Não é legal vc acessar os atributos dentro da função como vc fez, exemplo (parmegiana1.getNome), o mais indicado é usar o atributo direto, pq vc está dentro da classe, ao invés de "parmegiana1.getNome", é mais interessante "parmegiana1.Nome", o getNome vc usa fora dessa classe, dentro dela sempre que possível usa desse jeito pq é mais claro
+A função add, vc colocou que ela retorna um produto, mas no App.java vc não está recebendo nenhum produto, por exemplo, vc colocou lá "produto.add(parmegiana1)", isso funciona, mas a sua função retorna um produto, seguindo essa lógica o certo seria "produto = produto.add(parmegiana1)", mas ai também não faz muito sentido já que vc está adicionando a parmegiana1 os atributos, então acho melhor mudar essa função pro tipo void
+Outra coisa, a função add só faz sentido se vc quando criar o produto não especificar o nome, id e preço (vc estava fazendo assim, não está errado, só é uma forma mais trabalhosa).
+Mudei a função add para atualizar e deixei ela retornando um produto novo, ai fica a seu critério se vai manter ela, não sei se vai precisar no futuro. então pra usar é bem simples, é só chamar no app.java, exemplo: parmegiana1 = parmegiana1.atualizar("parmegiana teste", 3, 90), nesse caso iria atualizar o nome do produto parmegiana pra parmegiana teste, id 3, e preço 80
+Criei a função exibirDados só pra facilitar na hora de exibir os dados dos produtos no menu, mas isso vc poderia fazer manualmente também, acho que ta bem simples
+Por último a função getId - eu acabei fazendo isso, mas no fim nem usei, talvez vc use no futuro, é só uma função simples que vc envia um produto e recebe o id dele de volta
+
+
+App.java:
+
+Como te expliquei ali em cima, o ideal seria a gente criar o produto já com alguns atributos que são indispensáveis, mesmo que com valores nulos, então o passo a passo que fiz fica:
+Removi a instancia Produto produto aqui, pq não faz sentido como expliquei no começo, a não ser que produto se torne um objeto que vc queira usar, como a gente vai usar parmegiana e guarana, não faz sentido
+Na hora de criar o produto parmegiana e guarana, eu vou criar usando o construtor que pede os atributos (id, nome, preco), assim a gente não precisa se preocupar com esses dados (em teoria o restaurante já tem registrado)
+O cliente vc gerou certinho, como vc pede os dados do cliente, então o objeto tem que iniciar vazio, e com isso se chamam as funções e vai preenchendo o objeto pessoa
+A função gerar cardápio acaba se tornando pra gente, já que inicamos o cardápio na criação do objeto, vc poderia fazer desse jeito também, era só deixar assim:
+	gerarCardapio() {
+		Produto parmegiana1 = new Produto(1, "Parmegiana", 65);
+        Produto guarana = new Produto(2, "Guaraná", 5);
+	}
+ao invés da função gerar cardápio, criei uma função exibirCardápio, que simplesmente vai exibir o que já ta no menu, de forma simples
+Em selecionarItem foi onde mais mudei, não mexi na sua lógica de dowhile, ta certinho, só mudei como é pego o id, agora ele guarda em uma varíavel chamada "id" (quem diria), e manda pra função "adicionaCarrinho", vou explicar melhor essa função, mas pra resumir é só um switch que adicionar no carrinho o produto de acordo com o id (pensei em outras soluções, mas essa foi de longe a mais simples e fácil de entender / funcionar)
+ainda em selecionarItem, eu tirei o seu If, já que fiz um switch, ele acabou não servindo mais, e por fim chamei a função comprarItem
+
+adicionaNoCarrinho - uma função simples só pra adicionar ao carrinho, vou explicar melhor a classe carrinho, mas nessa função eu só to adicionando na arraylist o produto parmegiana1 ou guarana, de acordo com o id que o usuário digitou
+comprarItem - chama uma função que exibe todos os produtos que estão no carrinho
+
+dica: acho que seria legal um sistema de quantidade, ai fica de treino pra vc, se adicionar 2 ou mais produtos iguais, por enquanto ta bem simples só exibindo os produtos repetidos
+
+
+Classe carrinho:
+Só tem um atributo nessa classe que é o de lista, tentei deixar o mais simples que consegui nesse tempo que mexi, vou tentar explicar o melhor possível:
+
+Arraylist - a sintaxe não é muito amigável pra declarar, mas é bem tranquilo de entender. Basicamente o arraylist é uma lista de um tipo (da pra criar com mais tipos, mas vamos pelo básico agora), então o que eu fiz foi criar uma lista do tipo Produto, o tipo Produto é o que vc criou, e como vc sabe cada produto tem id, nome e preço
+então cada item da nossa lista vai ser um produto, e cada produto tem id, nome e preço.
+comentei melhor as funções no código mesmo pra ficar mais facil
+
+Na função exibeTodosOsProdutos - eu usei um for, mas geralmente se usa ForEach, o foreach seria mais chato de explicar e não sei se conhece, então preferi desse jeito, de qualquer forma vai funcionar
+Ainda na função exibeTodosOsProdutos, essa talvez seja a parte mais chata de entender, eu usei a função .get(indice) pra encontrar o produto, então o for passa pela lista inteira, e eu usei o get pra pegar cada passagem, ou seja, peguei todos os produtos com a função .get e já emendei com as funções que vc criou la na classe Produto, foi mais ou menos assim:
+Item 1 da lista -> parmegiana1.getId, parmegiana1.getNome, parmegiana1.getPreco
+Item 2 da lista -> guarana.getId, guarana.getNome, guarana.getPreco
+e ele faria isso com cada item, pq eu usei a função .size pra determinar o condicional do for, então se tivessemos 10 itens, ele faria pra cada um.
+é um pouco confuso, mas vc poderia separar também, 
+por exemplo: 
+	Produto produto = listaDeProduto.get(i)
+	produto.getId 
+desse jeito ficaria igual fizemos na classe Produto pra chamar, só ilustrando, no fim estamos acessando cada produto que tem na lista e cada produto tem as funções que vc criou e podemos chamar.
+
+não sei se ficou confuso o uso do "this", basicamente o this usa o objeto que chamou como alvo, no caso do carrinho, eu chamei la no App.java depois de criar e colocar itens dentro dele, então ele usa o carrinho do App.java como norte pra buscar os dados na listaDeProdutos
